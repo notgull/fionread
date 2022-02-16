@@ -1,0 +1,13 @@
+[package]
+name = "fionread"
+version = "0.1.0"
+edition = "2021"
+license = "MIT AND Apache-2.0"
+description = "The `fionread` IO control reads the number of bytes available to read from the file descriptor."
+authors = ["John Notgull"]
+
+[target.'cfg(unix)'.dependencies]
+nix = "0.23"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.32", features = ["Win32_Networking_WinSock"] }
