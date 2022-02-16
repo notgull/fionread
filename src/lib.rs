@@ -1,5 +1,8 @@
 // MIT/Apache2 License
 
+//! This crate provides a single function: [`fionread`]. See that function for more
+//! information.
+
 use __internal::Sealed;
 use std::io::Result;
 
@@ -93,6 +96,19 @@ use placeholder_impl::fionread_impl;
 /// 
 /// This function calls the `FIONREAD` ioctl on Unix and the
 /// ioctlsocket equivalent on Windows.
+/// 
+/// # Example
+/// 
+/// ```no_run
+/// # use fionread::fionread;
+/// # use std::net::TcpStream;
+/// # fn main() -> std::io::Result<()> {
+/// let mut stream = TcpStream::connect(("google.com", 80))?;
+/// let n = fionread(&stream)?;
+/// println!("There are {} bytes available", n);
+/// # Ok(())
+/// # }
+/// ```
 #[inline]
 pub fn fionread<T: AsRaw + ?Sized>(sock: &T) -> Result<usize> {
     fionread_impl(sock.as_raw())
