@@ -5,6 +5,9 @@ edition = "2018"
 license = "MIT AND Apache-2.0"
 description = "The `fionread` IO control reads the number of bytes available to read from the file descriptor."
 authors = ["John Notgull"]
+documentation = "https://docs.rs/fionread"
+repository = "https://github.com/notgull/fionread"
+homepage = "https://notgull.github.io/fionread#readme"
 
 [target.'cfg(unix)'.dependencies]
 nix = "0.23"
