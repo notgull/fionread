@@ -1,5 +1,16 @@
 # fionread
 
+[![crates.io][crates-badge]][crates-url]
+[![Documentation][docs-badge]][docs-url]
+[![Build Status][build-badge]][build-url]
+
+[build-badge]: https://img.shields.io/github/workflow/status/notgull/fionread/CI
+[build-url]: https://github.com/notgull/fionread/actions?query=workflow%3ACI+branch%3Amaster
+[docs-badge]: https://img.shields.io/docsrs/fionread
+[docs-url]: https://docs.rs/fionread
+[crates-badge]: https://img.shields.io/crates/v/fionread
+[crates-url]: https://crates.io/crates/fionread
+
 This crate provides an abstraction over the `FIONREAD` ioctl. This is used to tell how many
 bytes are in the read queue for a given socket.
 
