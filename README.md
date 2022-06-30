@@ -9,6 +9,8 @@ and it seems a little silly to throw that away for a single syscall that probabl
 used that often in the common case. That's not to say that this may not be useful
 elsewhere.
 
+MSRV is currently 1.46.0. This MSRV will not change without a minor version bump.
+
 ## Licensing
 
 Licensed under the MIT and Apache 2.0 licenses, just like Rust proper is.

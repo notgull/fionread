@@ -1,0 +1,111 @@
+name: CI
+
+env:
+  RUSTFLAGS: -Dwarnings
+  clippy_version: 1.60.0
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  rustfmt:
+    name: rustfmt
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - rust: stable
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          profile: minimal
+          override: true
+          components: rustfmt
+      - uses: Swatinem/rust-cache@v1
+      - name: Run rustfmt
+        run: cargo fmt --check
+
+  clippy:
+    name: clippy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.clippy_version }}
+          override: true
+          components: clippy
+      - uses: Swatinem/rust-cache@v1
+      - name: Run Clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --all --tests --all-features
+
+  # copy-pasted from async-io
+  cross:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+    - name: Install Rust
+      run: rustup update stable
+    - name: Install cross
+      uses: taiki-e/install-action@cross
+    - name: Android
+      if: startsWith(matrix.os, 'ubuntu')
+      run: cross test --target arm-linux-androideabi
+    - name: NetBSD
+      if: startsWith(matrix.os, 'ubuntu')
+      run: cross build --target x86_64-unknown-netbsd
+    - name: iOS
+      if: startsWith(matrix.os, 'macos')
+      run: cross build --target aarch64-apple-ios
+
+  test:
+    name: run tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+        toolchain:
+          - stable
+        include:
+          - os: ubuntu-latest
+            toolchain: beta
+          - os: ubuntu-latest
+            toolchain: nightly
+          - os: ubuntu-latest
+            toolchain: 1.46.0 # msrv
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          override: true
+      - uses: Swatinem/rust-cache@v1
+
+      # run tests
+      - name: Run Tests
+        run: cargo test
