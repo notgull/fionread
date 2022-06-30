@@ -21,9 +21,9 @@ type Raw = RawSocket;
 type Raw = std::convert::Infallible;
 
 /// An object that the [`fionread`] function can be called on.
-/// 
+///
 /// Implemented for all `AsRawFd` on Unix and `AsRawSocket` on Windows.
-pub trait AsRaw : Sealed {
+pub trait AsRaw: Sealed {
     /// Returns the raw file descriptor or socket.
     fn as_raw(&self) -> Raw;
 }
@@ -44,7 +44,11 @@ impl<T: AsRawSocket + ?Sized> AsRaw for T {
 
 #[cfg(unix)]
 mod unix_impl {
-    use std::{os::{unix::io::RawFd, raw::c_int}, io::Result, mem::MaybeUninit};
+    use std::{
+        io::Result,
+        mem::MaybeUninit,
+        os::{raw::c_int, unix::io::RawFd},
+    };
 
     #[inline]
     pub fn fionread_impl(sock: RawFd) -> Result<usize> {
@@ -60,8 +64,12 @@ mod unix_impl {
 
 #[cfg(windows)]
 mod windows_impl {
-    use std::{io::{self, Result}, os::windows::io::RawSocket, mem::MaybeUninit};
-    use windows_sys::Win32::Networking::WinSock::{FIONREAD, SOCKET, ioctlsocket};
+    use std::{
+        io::{self, Result},
+        mem::MaybeUninit,
+        os::windows::io::RawSocket,
+    };
+    use windows_sys::Win32::Networking::WinSock::{ioctlsocket, FIONREAD, SOCKET};
 
     #[inline]
     pub fn fionread_impl(sock: RawSocket) -> Result<usize> {
@@ -85,20 +93,20 @@ mod placeholder_impl {
     }
 }
 
+#[cfg(not(any(windows, unix)))]
+use placeholder_impl::fionread_impl;
 #[cfg(unix)]
 use unix_impl::fionread_impl;
 #[cfg(windows)]
 use windows_impl::fionread_impl;
-#[cfg(not(any(windows, unix)))]
-use placeholder_impl::fionread_impl;
 
 /// Read the number of bytes available from a socket.
-/// 
+///
 /// This function calls the `FIONREAD` ioctl on Unix and the
 /// ioctlsocket equivalent on Windows.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```no_run
 /// # use fionread::fionread;
 /// # use std::net::TcpStream;
@@ -118,10 +126,10 @@ pub fn fionread<T: AsRaw + ?Sized>(sock: &T) -> Result<usize> {
 mod __internal {
     #[cfg(unix)]
     use std::os::unix::io::AsRawFd;
-    
+
     #[cfg(windows)]
     use std::os::windows::io::AsRawSocket;
-    
+
     #[doc(hidden)]
     pub trait Sealed {
         #[doc(hidden)]
@@ -137,7 +145,12 @@ mod __internal {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::{io::Write, net::{TcpStream, TcpListener}, thread, sync::mpsc};
+    use std::{
+        io::Write,
+        net::{TcpListener, TcpStream},
+        sync::mpsc,
+        thread,
+    };
 
     #[test]
     fn test_fionread() {
@@ -159,7 +172,7 @@ mod tests {
         assert_eq!(fionread(&sock).unwrap(), 0);
 
         tx1.send(()).unwrap();
-        
+
         // after the write, we should receive some data
         rx2.recv().unwrap();
 
