@@ -1,8 +1,13 @@
+#               Copyright John Nunley, 2022.
+# Distributed under the Boost Software License, Version 1.0.
+#       (See accompanying file LICENSE or copy at
+#         https://www.boost.org/LICENSE_1_0.txt)
+
 [package]
 name = "fionread"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2018"
-license = "MIT AND Apache-2.0"
+license = "BSL-1.0"
 description = "The `fionread` IO control reads the number of bytes available to read from the file descriptor."
 authors = ["John Notgull"]
 documentation = "https://docs.rs/fionread"

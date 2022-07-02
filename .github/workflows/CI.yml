@@ -1,3 +1,8 @@
+#               Copyright John Nunley, 2022.
+# Distributed under the Boost Software License, Version 1.0.
+#       (See accompanying file LICENSE or copy at
+#         https://www.boost.org/LICENSE_1_0.txt)
+
 name: CI
 
 env:
@@ -66,6 +71,9 @@ jobs:
       run: rustup update stable
     - name: Install cross
       uses: taiki-e/install-action@cross
+    - name: FreeBSD
+      if: startsWith(matrix.os, 'ubuntu')
+      run: cross build --target x86_64-unknown-freebsd
     - name: NetBSD
       if: startsWith(matrix.os, 'ubuntu')
       run: cross build --target x86_64-unknown-netbsd
